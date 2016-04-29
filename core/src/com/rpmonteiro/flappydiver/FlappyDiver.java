@@ -8,13 +8,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Random;
 
 public class FlappyDiver extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture background;
-    ShapeRenderer shapeRenderer;
 
     Texture[] birds;
     int flapState = 0;
@@ -37,6 +38,8 @@ public class FlappyDiver extends ApplicationAdapter {
     float[] obstacleX = new float[numberOfObstacles];
     float[] obstacleOffset = new float[4];
     float distanceBetweenObstacles;
+    Rectangle[] topObstacleRectangles;
+    Rectangle[] bottomObstacleRectangles;
 
 
 	@Override
@@ -53,7 +56,6 @@ public class FlappyDiver extends ApplicationAdapter {
         birdX = windowWidth / 2 - birds[0].getWidth() / 2;
 
         birdCircle = new Circle();
-        shapeRenderer = new ShapeRenderer();
 
         topObstacle = new Texture("toptube.png");
         bottomObstacle = new Texture("bottomtube.png");
@@ -62,9 +64,15 @@ public class FlappyDiver extends ApplicationAdapter {
         randomGenerator = new Random();
 
         distanceBetweenObstacles = windowWidth * 3 / 4;
+        topObstacleRectangles = new Rectangle[numberOfObstacles];
+        bottomObstacleRectangles = new Rectangle[numberOfObstacles];
 
         for (int i = 0; i < numberOfObstacles; i++) {
+            obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
             obstacleX[i] = windowWidth / 2 - topObstacle.getWidth() / 2 + i * distanceBetweenObstacles;
+
+            topObstacleRectangles[i] = new Rectangle();
+            bottomObstacleRectangles[i] = new Rectangle();
         }
     }
 
@@ -82,17 +90,17 @@ public class FlappyDiver extends ApplicationAdapter {
             for (int i = 0; i < numberOfObstacles; i++) {
 
                 if (obstacleX[i] < -topObstacle.getWidth()) {
-                    obstacleX[i] += numberOfObstacles * distanceBetweenObstacles;
                     obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
-
+                    obstacleX[i] += numberOfObstacles * distanceBetweenObstacles;
+                } else {
+                    obstacleX[i] -= obstacleVelocity;
                 }
 
-                obstacleX[i] -= obstacleVelocity;
+                batch.draw(topObstacle, obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i]);
+                batch.draw(bottomObstacle, obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i]);
 
-                batch.draw(topObstacle, obstacleX[i],
-                        windowHeight / 2 + gap / 2 + obstacleOffset[i]);
-                batch.draw(bottomObstacle, obstacleX[i],
-                        windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i]);
+                topObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i], topObstacle.getWidth(), topObstacle.getHeight());
+                bottomObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i], bottomObstacle.getWidth(), bottomObstacle.getHeight());
             }
 
             if (birdY > 0 || velocity < 0) {
@@ -118,12 +126,12 @@ public class FlappyDiver extends ApplicationAdapter {
 
         birdCircle.set(windowWidth / 2, birdY + birds[0].getHeight() / 2, birds[0].getWidth() / 2);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED);
-
-	    shapeRenderer.circle(birdCircle.x, birdCircle.y, birdCircle.radius);
-        shapeRenderer.end();
-
+        for (int i = 0; i < numberOfObstacles; i++) {
+            if (Intersector.overlaps(birdCircle, topObstacleRectangles[i]) || Intersector.overlaps(birdCircle, bottomObstacleRectangles[i])) {
+                Gdx.app.log("FlappyDiver", "Collision Detected!!");
+            }
+        }
+        
     }
 
 }
