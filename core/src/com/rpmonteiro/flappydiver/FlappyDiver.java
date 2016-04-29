@@ -33,7 +33,8 @@ public class FlappyDiver extends ApplicationAdapter {
     float gap = 400;
     Random randomGenerator;
 
-    int score;
+    int score = 0;
+    int scoringObstacle = 0;
 
     float maxObstacleOffset;
     float obstacleVelocity = 4;
@@ -53,7 +54,6 @@ public class FlappyDiver extends ApplicationAdapter {
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
-        score = 0;
 
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
@@ -89,6 +89,18 @@ public class FlappyDiver extends ApplicationAdapter {
 
         if (gameState != 0) {
 
+            if (obstacleX[scoringObstacle] < windowWidth / 2) {
+                score++;
+
+                Gdx.app.log("FlappyDiver", "Score is " + score);
+
+                if (scoringObstacle < numberOfObstacles - 1) {
+                    scoringObstacle++;
+                } else {
+                    scoringObstacle = 0;
+                }
+            }
+
             if (Gdx.input.justTouched()) {
                 velocity = -35;
             }
@@ -96,8 +108,10 @@ public class FlappyDiver extends ApplicationAdapter {
             for (int i = 0; i < numberOfObstacles; i++) {
 
                 if (obstacleX[i] < -topObstacle.getWidth()) {
+
                     obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
                     obstacleX[i] += numberOfObstacles * distanceBetweenObstacles;
+
                 } else {
                     obstacleX[i] -= obstacleVelocity;
                 }
