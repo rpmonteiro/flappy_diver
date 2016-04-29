@@ -26,31 +26,37 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture bottomObstacle;
     float maxObstacleOffset;
     Random randomGenerator;
-    float obstacleOffset;
     float obstacleVelocity = 4;
-    float obstacleX;
+    int numberOfObstacles = 4;
+    float[] obstacleX = new float[numberOfObstacles];
+    float[] obstacleOffset = new float[4];
+    float distanceBetweenObstacles;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
-
 		background = new Texture("bg.png");
 
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
         birds[1] = new Texture("bird2.png");
-
         birdY = windowHeight / 2 - birds[0].getHeight() / 2;
         birdX = windowWidth / 2 - birds[0].getWidth() / 2;
 
         topObstacle = new Texture("toptube.png");
         bottomObstacle = new Texture("bottomtube.png");
-
         maxObstacleOffset = windowHeight / 2 - gap / 2 - 100;
 
         randomGenerator = new Random();
+
+        distanceBetweenObstacles = windowWidth / 2;
+
+        for (int i = 0; i < numberOfObstacles; i++) {
+            obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
+            obstacleX[i] = windowWidth / 2 - topObstacle.getWidth() / 2 + i * distanceBetweenObstacles;
+        }
     }
 
 	@Override
@@ -62,21 +68,22 @@ public class FlappyDiver extends ApplicationAdapter {
 
             if (Gdx.input.justTouched()) {
                 velocity = -35;
-                obstacleOffset = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
-                obstacleX = windowWidth / 2 - topObstacle.getWidth() / 2;
             }
 
-            obstacleX -= 4;
+            for (int i = 0; i < numberOfObstacles; i++) {
+                obstacleX[i] -= obstacleVelocity;
 
-            batch.draw(topObstacle, obstacleX,
-                    windowHeight / 2 + gap / 2 + obstacleOffset);
-            batch.draw(bottomObstacle, obstacleX,
-                    windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset);
+                batch.draw(topObstacle, obstacleX[i],
+                        windowHeight / 2 + gap / 2 + obstacleOffset[i]);
+                batch.draw(bottomObstacle, obstacleX[i],
+                        windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i]);
+            }
 
             if (birdY > 0 || velocity < 0) {
                 velocity += gravity;
                 birdY -= velocity;
             }
+
         } else {
             if (Gdx.input.justTouched()) {
                 Gdx.app.log("FlappyDiver", "User just touched");
