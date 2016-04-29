@@ -20,6 +20,7 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture[] birds;
     Texture topObstacle;
     Texture bottomObstacle;
+    Texture gameover;
     BitmapFont font;
 
     float windowHeight;
@@ -31,8 +32,8 @@ public class FlappyDiver extends ApplicationAdapter {
 
     float velocity = 0;
     int gameState = 0;
-    double gravity = 2.45;
-    float gap = 400;
+    double gravity = 2.3;
+    float gap = 500;
     Random randomGenerator;
 
     int score = 0;
@@ -56,6 +57,7 @@ public class FlappyDiver extends ApplicationAdapter {
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
+        gameover = new Texture("gameover.png");
 
         font = new BitmapFont();
         font.setColor(Color.WHITE);
@@ -79,6 +81,10 @@ public class FlappyDiver extends ApplicationAdapter {
         topObstacleRectangles = new Rectangle[numberOfObstacles];
         bottomObstacleRectangles = new Rectangle[numberOfObstacles];
 
+        startGame();
+    }
+
+    public void startGame() {
         for (int i = 0; i < numberOfObstacles; i++) {
             obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
             obstacleX[i] = windowWidth / 2 - topObstacle.getWidth() / 2 + windowWidth + i * distanceBetweenObstacles;
@@ -93,7 +99,7 @@ public class FlappyDiver extends ApplicationAdapter {
         batch.begin();
         batch.draw(background, 0, 0, windowWidth, windowHeight);
 
-        if (gameState != 0) {
+        if (gameState == 1) {
 
             if (obstacleX[scoringObstacle] < windowWidth / 2) {
                 score++;
@@ -129,15 +135,27 @@ public class FlappyDiver extends ApplicationAdapter {
                 bottomObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i], bottomObstacle.getWidth(), bottomObstacle.getHeight());
             }
 
-            if (birdY > 0 || velocity < 0) {
+            if (birdY > 0) {
                 velocity += gravity;
                 birdY -= velocity;
+            } else {
+                gameState = 2;
             }
 
-        } else {
+        } else if (gameState == 0) {
             if (Gdx.input.justTouched()) {
-                Gdx.app.log("FlappyDiver", "User just touched");
                 gameState = 1;
+            }
+        } else if (gameState == 2) {
+            batch.draw(gameover, windowWidth / 2 - gameover.getWidth() / 2, windowHeight / 2 - gameover.getHeight() / 2);
+
+            if (Gdx.input.justTouched()) {
+                gameState = 1;
+                birdY = windowHeight / 2 - birds[0].getHeight() / 2;
+                startGame();
+                score = 0;
+                scoringObstacle = 0;
+                velocity = 0;
             }
         }
 
@@ -156,7 +174,7 @@ public class FlappyDiver extends ApplicationAdapter {
 
         for (int i = 0; i < numberOfObstacles; i++) {
             if (Intersector.overlaps(birdCircle, topObstacleRectangles[i]) || Intersector.overlaps(birdCircle, bottomObstacleRectangles[i])) {
-                Gdx.app.log("FlappyDiver", "Collision Detected!!");
+                gameState = 2;
             }
         }
 
