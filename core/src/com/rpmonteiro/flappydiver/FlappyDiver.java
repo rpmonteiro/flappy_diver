@@ -27,6 +27,8 @@ public class FlappyDiver extends ApplicationAdapter {
     float maxObstacleOffset;
     Random randomGenerator;
     float obstacleOffset;
+    float obstacleVelocity = 4;
+    float obstacleX;
 
 	@Override
 	public void create () {
@@ -61,11 +63,14 @@ public class FlappyDiver extends ApplicationAdapter {
             if (Gdx.input.justTouched()) {
                 velocity = -35;
                 obstacleOffset = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
+                obstacleX = windowWidth / 2 - topObstacle.getWidth() / 2;
             }
 
-            batch.draw(topObstacle, windowWidth / 2 - topObstacle.getWidth() / 2,
+            obstacleX -= 4;
+
+            batch.draw(topObstacle, obstacleX,
                     windowHeight / 2 + gap / 2 + obstacleOffset);
-            batch.draw(bottomObstacle, windowWidth / 2 - bottomObstacle.getWidth() / 2,
+            batch.draw(bottomObstacle, obstacleX,
                     windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset);
 
             if (birdY > 0 || velocity < 0) {
