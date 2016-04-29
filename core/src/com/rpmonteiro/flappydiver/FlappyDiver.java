@@ -2,15 +2,19 @@ package com.rpmonteiro.flappydiver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 
 import java.util.Random;
 
 public class FlappyDiver extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture background;
+    ShapeRenderer shapeRenderer;
 
     Texture[] birds;
     int flapState = 0;
@@ -18,6 +22,8 @@ public class FlappyDiver extends ApplicationAdapter {
     float windowWidth;
     float birdY = 0;
     float birdX = 0;
+    Circle birdCircle;
+
     float velocity = 0;
     int gameState = 0;
     double gravity = 2.45;
@@ -32,6 +38,7 @@ public class FlappyDiver extends ApplicationAdapter {
     float[] obstacleOffset = new float[4];
     float distanceBetweenObstacles;
 
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -45,16 +52,18 @@ public class FlappyDiver extends ApplicationAdapter {
         birdY = windowHeight / 2 - birds[0].getHeight() / 2;
         birdX = windowWidth / 2 - birds[0].getWidth() / 2;
 
+        birdCircle = new Circle();
+        shapeRenderer = new ShapeRenderer();
+
         topObstacle = new Texture("toptube.png");
         bottomObstacle = new Texture("bottomtube.png");
         maxObstacleOffset = windowHeight / 2 - gap / 2 - 100;
 
         randomGenerator = new Random();
 
-        distanceBetweenObstacles = windowWidth / 2;
+        distanceBetweenObstacles = windowWidth * 3 / 4;
 
         for (int i = 0; i < numberOfObstacles; i++) {
-            obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
             obstacleX[i] = windowWidth / 2 - topObstacle.getWidth() / 2 + i * distanceBetweenObstacles;
         }
     }
@@ -71,6 +80,13 @@ public class FlappyDiver extends ApplicationAdapter {
             }
 
             for (int i = 0; i < numberOfObstacles; i++) {
+
+                if (obstacleX[i] < -topObstacle.getWidth()) {
+                    obstacleX[i] += numberOfObstacles * distanceBetweenObstacles;
+                    obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
+
+                }
+
                 obstacleX[i] -= obstacleVelocity;
 
                 batch.draw(topObstacle, obstacleX[i],
@@ -100,6 +116,14 @@ public class FlappyDiver extends ApplicationAdapter {
         batch.draw(birds[flapState], birdX, birdY);
         batch.end();
 
-	}
+        birdCircle.set(windowWidth / 2, birdY + birds[0].getHeight() / 2, birds[0].getWidth() / 2);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+
+	    shapeRenderer.circle(birdCircle.x, birdCircle.y, birdCircle.radius);
+        shapeRenderer.end();
+
+    }
 
 }
