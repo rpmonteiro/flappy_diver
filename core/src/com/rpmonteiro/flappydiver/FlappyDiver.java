@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
@@ -19,6 +20,7 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture[] birds;
     Texture topObstacle;
     Texture bottomObstacle;
+    BitmapFont font;
 
     float windowHeight;
     float windowWidth;
@@ -54,6 +56,10 @@ public class FlappyDiver extends ApplicationAdapter {
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
+
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(10);
 
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
@@ -142,6 +148,8 @@ public class FlappyDiver extends ApplicationAdapter {
         }
 
         batch.draw(birds[flapState], birdX, birdY);
+        font.draw(batch, String.valueOf(score), 100, 200);
+
         batch.end();
 
         birdCircle.set(windowWidth / 2, birdY + birds[0].getHeight() / 2, birds[0].getWidth() / 2);
