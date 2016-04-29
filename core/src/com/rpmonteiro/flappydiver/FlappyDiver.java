@@ -16,28 +16,33 @@ import java.util.Random;
 public class FlappyDiver extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture background;
-
     Texture[] birds;
-    int flapState = 0;
+    Texture topObstacle;
+    Texture bottomObstacle;
+
     float windowHeight;
     float windowWidth;
+
+    int flapState = 0;
     float birdY = 0;
     float birdX = 0;
-    Circle birdCircle;
 
     float velocity = 0;
     int gameState = 0;
     double gravity = 2.45;
     float gap = 400;
-    Texture topObstacle;
-    Texture bottomObstacle;
-    float maxObstacleOffset;
     Random randomGenerator;
+
+    int score;
+
+    float maxObstacleOffset;
     float obstacleVelocity = 4;
     int numberOfObstacles = 4;
     float[] obstacleX = new float[numberOfObstacles];
     float[] obstacleOffset = new float[4];
     float distanceBetweenObstacles;
+
+    Circle birdCircle;
     Rectangle[] topObstacleRectangles;
     Rectangle[] bottomObstacleRectangles;
 
@@ -48,6 +53,7 @@ public class FlappyDiver extends ApplicationAdapter {
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
+        score = 0;
 
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
@@ -69,7 +75,7 @@ public class FlappyDiver extends ApplicationAdapter {
 
         for (int i = 0; i < numberOfObstacles; i++) {
             obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
-            obstacleX[i] = windowWidth / 2 - topObstacle.getWidth() / 2 + i * distanceBetweenObstacles;
+            obstacleX[i] = windowWidth / 2 - topObstacle.getWidth() / 2 + windowWidth + i * distanceBetweenObstacles;
 
             topObstacleRectangles[i] = new Rectangle();
             bottomObstacleRectangles[i] = new Rectangle();
@@ -131,7 +137,7 @@ public class FlappyDiver extends ApplicationAdapter {
                 Gdx.app.log("FlappyDiver", "Collision Detected!!");
             }
         }
-        
+
     }
 
 }
