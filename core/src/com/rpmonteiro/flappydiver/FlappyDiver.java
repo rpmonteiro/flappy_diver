@@ -40,11 +40,13 @@ public class FlappyDiver extends ApplicationAdapter {
     int scoringObstacle = 0;
 
     float maxObstacleOffset;
-    float obstacleVelocity = 4;
+    float obstacleVelocity = 9;
     int numberOfObstacles = 4;
     float[] obstacleX = new float[numberOfObstacles];
     float[] obstacleOffset = new float[4];
     float distanceBetweenObstacles;
+
+    int jumpHeight = -35;
 
     Circle birdCircle;
     Rectangle[] topObstacleRectangles;
@@ -114,7 +116,7 @@ public class FlappyDiver extends ApplicationAdapter {
             }
 
             if (Gdx.input.justTouched()) {
-                velocity = -35;
+                velocity = jumpHeight;
             }
 
             for (int i = 0; i < numberOfObstacles; i++) {
