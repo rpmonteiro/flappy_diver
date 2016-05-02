@@ -2,6 +2,7 @@ package com.rpmonteiro.flappydiver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +25,8 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture bottomObstacle;
     Texture gameover;
     BitmapFont font;
+    public static Preferences prefs;
+
 
     float windowHeight;
     float windowWidth;
@@ -64,6 +67,12 @@ public class FlappyDiver extends ApplicationAdapter {
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
         gameover = new Texture("gameover.png");
+
+        prefs = Gdx.app.getPreferences("FlappyDiver");
+
+        if (!prefs.contains("highScore")) {
+            prefs.putInteger("highScore", 0);
+        }
 
         font = new BitmapFont();
         font.setColor(Color.WHITE);
@@ -136,6 +145,20 @@ public class FlappyDiver extends ApplicationAdapter {
         }
     }
 
+    public void setHighScore(int score) {
+        prefs.putInteger("highScore", score);
+        prefs.flush();
+    }
+
+    public int getHighScore() {
+        return prefs.getInteger("highScore");
+    }
+
+    public void showGameoverScreen() {
+        font.draw(batch, String.valueOf(getHighScore()), 100, 200);
+        batch.draw(gameover, windowWidth / 2 - gameover.getWidth() / 2, windowHeight / 2 - gameover.getHeight() / 2);
+    }
+
 	@Override
 	public void render () {
         batch.begin();
@@ -171,7 +194,11 @@ public class FlappyDiver extends ApplicationAdapter {
                 gameState = 1;
             }
         } else if (gameState == 2) {
-            batch.draw(gameover, windowWidth / 2 - gameover.getWidth() / 2, windowHeight / 2 - gameover.getHeight() / 2);
+            if (getHighScore() < score) {
+                setHighScore(score);
+            }
+            
+            showGameoverScreen();
 
             if (Gdx.input.justTouched()) {
                 gameState = 1;
