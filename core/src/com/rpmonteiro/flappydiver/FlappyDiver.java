@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 import java.util.Random;
 
@@ -29,6 +31,8 @@ public class FlappyDiver extends ApplicationAdapter {
     int flapState = 0;
     float birdY = 0;
     float birdX = 0;
+    float flapDelay = 1f;
+    int flapAway = 0;
 
     float velocity = 0;
     int gameState = 0;
@@ -96,6 +100,53 @@ public class FlappyDiver extends ApplicationAdapter {
         }
     }
 
+    public void flap() {
+        if (flapAway == 1) {
+            Timer.schedule(new Task(){
+                @Override
+                public void run() {
+                if (flapState == 0) {
+                    Gdx.app.log("FlappyDiver", "Flap state is 0. Changing to 1");
+                    flapState = 1;
+                } else {
+                    Gdx.app.log("FlappyDiver", "Flap state is 1. Changing to 0");
+                    flapState = 0;
+                }
+                    Gdx.app.log("FlappyDiver", "Flapping...");
+                }
+            }, 1, 1);
+        }
+        batch.draw(birds[flapState], birdX, birdY);
+    }
+
+    public void drawObstacles() {
+        for (int i = 0; i < numberOfObstacles; i++) {
+
+            if (obstacleX[i] < -topObstacle.getWidth()) {
+
+                obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
+                obstacleX[i] += numberOfObstacles * distanceBetweenObstacles;
+
+            } else {
+                obstacleX[i] -= obstacleVelocity;
+            }
+            batch.draw(topObstacle, obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i]);
+            batch.draw(bottomObstacle, obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i]);
+
+            topObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i], topObstacle.getWidth(), topObstacle.getHeight());
+            bottomObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i], bottomObstacle.getWidth(), bottomObstacle.getHeight());
+
+        }
+    }
+
+    public void startFlapping() {
+        flapAway = 1;
+    }
+
+    public void stopFlapping() {
+        flapAway = 0;
+    }
+
 	@Override
 	public void render () {
         batch.begin();
@@ -105,8 +156,6 @@ public class FlappyDiver extends ApplicationAdapter {
 
             if (obstacleX[scoringObstacle] < windowWidth / 2) {
                 score++;
-
-                Gdx.app.log("FlappyDiver", "Score is " + score);
 
                 if (scoringObstacle < numberOfObstacles - 1) {
                     scoringObstacle++;
@@ -119,23 +168,7 @@ public class FlappyDiver extends ApplicationAdapter {
                 velocity = jumpHeight;
             }
 
-            for (int i = 0; i < numberOfObstacles; i++) {
-
-                if (obstacleX[i] < -topObstacle.getWidth()) {
-
-                    obstacleOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (windowHeight - gap - 200);
-                    obstacleX[i] += numberOfObstacles * distanceBetweenObstacles;
-
-                } else {
-                    obstacleX[i] -= obstacleVelocity;
-                }
-
-                batch.draw(topObstacle, obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i]);
-                batch.draw(bottomObstacle, obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i]);
-
-                topObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i], topObstacle.getWidth(), topObstacle.getHeight());
-                bottomObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i], bottomObstacle.getWidth(), bottomObstacle.getHeight());
-            }
+            drawObstacles();
 
             if (birdY > 0) {
                 velocity += gravity;
@@ -161,13 +194,7 @@ public class FlappyDiver extends ApplicationAdapter {
             }
         }
 
-        if (flapState == 0) {
-            flapState = 1;
-        } else {
-            flapState = 0;
-        }
-
-        batch.draw(birds[flapState], birdX, birdY);
+        flap();
         font.draw(batch, String.valueOf(score), 100, 200);
 
         batch.end();
