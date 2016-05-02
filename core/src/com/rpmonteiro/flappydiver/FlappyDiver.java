@@ -101,20 +101,10 @@ public class FlappyDiver extends ApplicationAdapter {
     }
 
     public void flap() {
-        if (flapAway == 1) {
-            Timer.schedule(new Task(){
-                @Override
-                public void run() {
-                if (flapState == 0) {
-                    Gdx.app.log("FlappyDiver", "Flap state is 0. Changing to 1");
-                    flapState = 1;
-                } else {
-                    Gdx.app.log("FlappyDiver", "Flap state is 1. Changing to 0");
-                    flapState = 0;
-                }
-                    Gdx.app.log("FlappyDiver", "Flapping...");
-                }
-            }, 1, 1);
+        if (flapState == 0) {
+            flapState = 1;
+        } else {
+            flapState = 0;
         }
         batch.draw(birds[flapState], birdX, birdY);
     }
@@ -135,16 +125,15 @@ public class FlappyDiver extends ApplicationAdapter {
 
             topObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 + gap / 2 + obstacleOffset[i], topObstacle.getWidth(), topObstacle.getHeight());
             bottomObstacleRectangles[i] = new Rectangle(obstacleX[i], windowHeight / 2 - gap / 2 - bottomObstacle.getHeight() + obstacleOffset[i], bottomObstacle.getWidth(), bottomObstacle.getHeight());
-
         }
     }
 
-    public void startFlapping() {
-        flapAway = 1;
-    }
-
-    public void stopFlapping() {
-        flapAway = 0;
+    public void checkCollision() {
+        for (int i = 0; i < numberOfObstacles; i++) {
+            if (Intersector.overlaps(birdCircle, topObstacleRectangles[i]) || Intersector.overlaps(birdCircle, bottomObstacleRectangles[i])) {
+                gameState = 2;
+            }
+        }
     }
 
 	@Override
@@ -201,11 +190,7 @@ public class FlappyDiver extends ApplicationAdapter {
 
         birdCircle.set(windowWidth / 2, birdY + birds[0].getHeight() / 2, birds[0].getWidth() / 2);
 
-        for (int i = 0; i < numberOfObstacles; i++) {
-            if (Intersector.overlaps(birdCircle, topObstacleRectangles[i]) || Intersector.overlaps(birdCircle, bottomObstacleRectangles[i])) {
-                gameState = 2;
-            }
-        }
+        checkCollision();
 
     }
 
