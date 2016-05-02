@@ -4,16 +4,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
 
 import java.util.Random;
 
@@ -25,6 +21,7 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture bottomObstacle;
     Texture gameover;
     BitmapFont font;
+    BitmapFont fontTest;
     public static Preferences prefs;
 
 
@@ -73,6 +70,8 @@ public class FlappyDiver extends ApplicationAdapter {
         if (!prefs.contains("highScore")) {
             prefs.putInteger("highScore", 0);
         }
+
+        fontTest = new BitmapFont(Gdx.files.internal("text.fnt"), false);
 
         font = new BitmapFont();
         font.setColor(Color.WHITE);
@@ -155,7 +154,8 @@ public class FlappyDiver extends ApplicationAdapter {
     }
 
     public void showGameoverScreen() {
-        font.draw(batch, String.valueOf(getHighScore()), 100, 200);
+
+        fontTest.draw(batch, String.valueOf(getHighScore()), 400, 400);
         batch.draw(gameover, windowWidth / 2 - gameover.getWidth() / 2, windowHeight / 2 - gameover.getHeight() / 2);
     }
 
@@ -197,7 +197,7 @@ public class FlappyDiver extends ApplicationAdapter {
             if (getHighScore() < score) {
                 setHighScore(score);
             }
-            
+
             showGameoverScreen();
 
             if (Gdx.input.justTouched()) {
