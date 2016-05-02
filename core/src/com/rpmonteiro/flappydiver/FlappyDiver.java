@@ -106,7 +106,11 @@ public class FlappyDiver extends ApplicationAdapter {
         } else {
             flapState = 0;
         }
-        batch.draw(birds[flapState], birdX, birdY);
+        int angle = 45;
+//        batch.draw(birds[flapState], birdX, birdY); Not rotating :(
+        batch.draw(birds[flapState], birdX, birdY, 64, 64, 128, 128, 1, 1,
+                -velocity, 0, 0, birds[0].getWidth(), birds[0].getHeight(), false, false);
+
     }
 
     public void drawObstacles() {
