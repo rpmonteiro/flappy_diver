@@ -21,9 +21,7 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture bottomObstacle;
     Texture gameover;
     BitmapFont font;
-    BitmapFont fontTest;
     public static Preferences prefs;
-
 
     float windowHeight;
     float windowWidth;
@@ -31,8 +29,6 @@ public class FlappyDiver extends ApplicationAdapter {
     int flapState = 0;
     float birdY = 0;
     float birdX = 0;
-    float flapDelay = 1f;
-    int flapAway = 0;
 
     float velocity = 0;
     int gameState = 0;
@@ -71,11 +67,7 @@ public class FlappyDiver extends ApplicationAdapter {
             prefs.putInteger("highScore", 0);
         }
 
-        fontTest = new BitmapFont(Gdx.files.internal("text.fnt"), false);
-
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
-        font.getData().setScale(10);
+        font = new BitmapFont(Gdx.files.internal("text.fnt"), Gdx.files.internal("text.png"), false);
 
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
@@ -154,8 +146,6 @@ public class FlappyDiver extends ApplicationAdapter {
     }
 
     public void showGameoverScreen() {
-
-        fontTest.draw(batch, String.valueOf(getHighScore()), 400, 400);
         batch.draw(gameover, windowWidth / 2 - gameover.getWidth() / 2, windowHeight / 2 - gameover.getHeight() / 2);
     }
 
