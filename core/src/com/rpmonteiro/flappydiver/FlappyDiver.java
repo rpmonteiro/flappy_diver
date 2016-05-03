@@ -152,7 +152,10 @@ public class FlappyDiver extends ApplicationAdapter {
     }
 
     public void showGameoverScreen() {
-        batch.draw(gameover, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1000);
+        batch.draw(gameover, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1200);
+        font.getData().setScale(2);
+        font.draw(batch, String.valueOf(score), windowWidth / 2 + 225, windowHeight / 2 + 325);
+        font.draw(batch, String.valueOf(getHighScore()), windowWidth / 2 + 195, windowHeight / 2 + 110);
     }
 
 	@Override
@@ -178,7 +181,8 @@ public class FlappyDiver extends ApplicationAdapter {
 
             flap();
             drawObstacles();
-            font.draw(batch, String.valueOf(score), 100, 200);
+            font.getData().setScale(2);
+            font.draw(batch, String.valueOf(score), 75, 175);
 
 
             if (birdY > 0) {
