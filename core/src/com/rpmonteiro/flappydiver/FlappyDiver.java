@@ -39,11 +39,11 @@ public class FlappyDiver extends ApplicationAdapter {
     //Velocity - Gravity
     float velocity = 0;
     int gameState = 0;
-    double gravity = 2.3;
+    double gravity = 2;
 
     Random randomGenerator;
     public static Preferences prefs;
-    int jumpHeight = -30;
+    int jumpHeight = -27;
 
     //Score
     int score = 0;
@@ -52,7 +52,7 @@ public class FlappyDiver extends ApplicationAdapter {
     //Obstacles
     float maxObstacleOffset;
     float gap = 450;
-    float obstacleVelocity = 9;
+    float obstacleVelocity = 8.5f;
     int numberOfObstacles = 4;
     float[] obstacleX = new float[numberOfObstacles];
     float[] obstacleOffset = new float[4];
