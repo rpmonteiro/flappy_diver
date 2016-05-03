@@ -58,7 +58,7 @@ public class FlappyDiver extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump1.wav"));
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
         batch = new SpriteBatch();
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
