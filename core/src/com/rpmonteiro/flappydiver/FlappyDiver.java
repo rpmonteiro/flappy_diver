@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.Random;
 
 public class FlappyDiver extends ApplicationAdapter {
+    //Textures
 	SpriteBatch batch;
 	Texture background;
     Texture[] birds;
@@ -24,35 +25,40 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture splashScreen;
     Texture gameover;
     BitmapFont font;
-    public static Preferences prefs;
 
     float windowHeight;
     float windowWidth;
 
+    //Bird
     int flapState = 0;
     float birdY = 0;
     float birdX = 0;
     Sound jumpSound;
     Music music;
 
+    //Velocity - Gravity
     float velocity = 0;
     int gameState = 0;
     double gravity = 2.3;
-    float gap = 500;
-    Random randomGenerator;
 
+    Random randomGenerator;
+    public static Preferences prefs;
+    int jumpHeight = -30;
+
+    //Score
     int score = 0;
     int scoringObstacle = 0;
 
+    //Obstacles
     float maxObstacleOffset;
+    float gap = 450;
     float obstacleVelocity = 9;
     int numberOfObstacles = 4;
     float[] obstacleX = new float[numberOfObstacles];
     float[] obstacleOffset = new float[4];
     float distanceBetweenObstacles;
 
-    int jumpHeight = -35;
-
+    //Shapes
     Circle birdCircle;
     Rectangle[] topObstacleRectangles;
     Rectangle[] bottomObstacleRectangles;
@@ -229,11 +235,11 @@ public class FlappyDiver extends ApplicationAdapter {
 
         if (gameState == 1) {
 
-            checkIfBirdScored();
             flap();
-            drawObstacles();
-            drawScore();
             moveBird();
+            drawScore();
+            drawObstacles();
+            checkIfBirdScored();
 
             if (Gdx.input.justTouched()) {
                 jump();
