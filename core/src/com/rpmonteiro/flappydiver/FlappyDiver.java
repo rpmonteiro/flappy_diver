@@ -3,6 +3,7 @@ package com.rpmonteiro.flappydiver;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -32,11 +33,12 @@ public class FlappyDiver extends ApplicationAdapter {
     float birdY = 0;
     float birdX = 0;
     Sound jumpSound;
+    Music music;
 
     float velocity = 0;
     int gameState = 0;
     double gravity = 2.3;
-    float gap = 500;
+    float gap = 800;
     Random randomGenerator;
 
     int score = 0;
@@ -59,6 +61,7 @@ public class FlappyDiver extends ApplicationAdapter {
 	@Override
 	public void create () {
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         batch = new SpriteBatch();
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
@@ -115,6 +118,7 @@ public class FlappyDiver extends ApplicationAdapter {
 //        batch.draw(birds[flapState], birdX, birdY); Not rotating :(
         batch.draw(birds[flapState], birdX, birdY, 64, 64, 128, 128, 1, 1,
                 -velocity, 0, 0, birds[0].getWidth(), birds[0].getHeight(), false, false);
+        birdCircle.set(windowWidth / 2, birdY + birds[0].getHeight() / 2, birds[0].getWidth() / 2);
 
     }
 
@@ -145,6 +149,16 @@ public class FlappyDiver extends ApplicationAdapter {
         }
     }
 
+    public void jump() {
+        jumpSound.play(1.0f);
+        velocity = jumpHeight;
+    }
+
+    public void drawScore() {
+        font.getData().setScale(2);
+        font.draw(batch, String.valueOf(score), 75, 175);
+    }
+
     public void setHighScore(int score) {
         prefs.putInteger("highScore", score);
         prefs.flush();
@@ -165,6 +179,7 @@ public class FlappyDiver extends ApplicationAdapter {
 	public void render () {
         batch.begin();
         batch.draw(background, 0, 0, windowWidth, windowHeight);
+        music.play();
 
         if (gameState == 1) {
 
@@ -179,15 +194,12 @@ public class FlappyDiver extends ApplicationAdapter {
             }
 
             if (Gdx.input.justTouched()) {
-                jumpSound.play(1.0f);
-                velocity = jumpHeight;
+                jump();
             }
 
             flap();
             drawObstacles();
-            font.getData().setScale(2);
-            font.draw(batch, String.valueOf(score), 75, 175);
-
+            drawScore();
 
             if (birdY > 0) {
                 velocity += gravity;
@@ -220,9 +232,7 @@ public class FlappyDiver extends ApplicationAdapter {
         }
 
         batch.end();
-
-        birdCircle.set(windowWidth / 2, birdY + birds[0].getHeight() / 2, birds[0].getWidth() / 2);
-
+        
         checkCollision();
 
     }
