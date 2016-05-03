@@ -154,6 +154,10 @@ public class FlappyDiver extends ApplicationAdapter {
         velocity = jumpHeight;
     }
 
+    public void drawBackground() {
+        batch.draw(background, 0, 0, windowWidth, windowHeight);
+    }
+
     public void drawScore() {
         font.getData().setScale(2);
         font.draw(batch, String.valueOf(score), 75, 175);
@@ -164,8 +168,47 @@ public class FlappyDiver extends ApplicationAdapter {
         prefs.flush();
     }
 
+    public void checkIfBirdScored() {
+        if (obstacleX[scoringObstacle] < windowWidth / 2) {
+            score++;
+
+            if (scoringObstacle < numberOfObstacles - 1) {
+                scoringObstacle++;
+            } else {
+                scoringObstacle = 0;
+            }
+        }
+    }
+
     public int getHighScore() {
         return prefs.getInteger("highScore");
+    }
+
+    public void checkHighScore() {
+        if (getHighScore() < score) {
+            setHighScore(score);
+        }
+    }
+
+    public void moveBird() {
+        if (birdY > 0) {
+            velocity += gravity;
+            birdY -= velocity;
+        } else {
+            gameState = 2;
+        }
+    }
+
+    public void drawSplashScreen() {
+        batch.draw(splashScreen, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1000);
+    }
+
+    public void resetGameState() {
+        gameState = 1;
+        birdY = windowHeight / 2 - birds[0].getHeight() / 2;
+        score = 0;
+        scoringObstacle = 0;
+        velocity = 0;
     }
 
     public void showGameoverScreen() {
@@ -178,63 +221,42 @@ public class FlappyDiver extends ApplicationAdapter {
 	@Override
 	public void render () {
         batch.begin();
-        batch.draw(background, 0, 0, windowWidth, windowHeight);
+        drawBackground();
         music.play();
 
         if (gameState == 1) {
 
-            if (obstacleX[scoringObstacle] < windowWidth / 2) {
-                score++;
-
-                if (scoringObstacle < numberOfObstacles - 1) {
-                    scoringObstacle++;
-                } else {
-                    scoringObstacle = 0;
-                }
-            }
+            checkIfBirdScored();
+            flap();
+            drawObstacles();
+            drawScore();
+            moveBird();
 
             if (Gdx.input.justTouched()) {
                 jump();
             }
 
-            flap();
-            drawObstacles();
-            drawScore();
-
-            if (birdY > 0) {
-                velocity += gravity;
-                birdY -= velocity;
-            } else {
-                gameState = 2;
-            }
-
         } else if (gameState == 0) {
-            batch.draw(splashScreen, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1000);
+
+            drawSplashScreen();
 
             if (Gdx.input.justTouched()) {
                 gameState = 1;
             }
-        } else if (gameState == 2) {
-            if (getHighScore() < score) {
-                setHighScore(score);
-            }
 
+        } else if (gameState == 2) {
+
+            checkHighScore();
             showGameoverScreen();
 
             if (Gdx.input.justTouched()) {
-                gameState = 1;
-                birdY = windowHeight / 2 - birds[0].getHeight() / 2;
+                resetGameState();
                 startGame();
-                score = 0;
-                scoringObstacle = 0;
-                velocity = 0;
             }
         }
 
         batch.end();
-        
         checkCollision();
 
     }
-
 }
