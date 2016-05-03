@@ -19,6 +19,7 @@ public class FlappyDiver extends ApplicationAdapter {
     Texture[] birds;
     Texture topObstacle;
     Texture bottomObstacle;
+    Texture splashScreen;
     Texture gameover;
     BitmapFont font;
     public static Preferences prefs;
@@ -59,7 +60,8 @@ public class FlappyDiver extends ApplicationAdapter {
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
-        gameover = new Texture("gameover.png");
+        gameover = new Texture("scoreboardFinal.png");
+        splashScreen = new Texture("splashFinal.png");
 
         prefs = Gdx.app.getPreferences("FlappyDiver");
 
@@ -150,7 +152,7 @@ public class FlappyDiver extends ApplicationAdapter {
     }
 
     public void showGameoverScreen() {
-        batch.draw(gameover, windowWidth / 2 - gameover.getWidth() / 2, windowHeight / 2 - gameover.getHeight() / 2);
+        batch.draw(gameover, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1000);
     }
 
 	@Override
@@ -174,7 +176,10 @@ public class FlappyDiver extends ApplicationAdapter {
                 velocity = jumpHeight;
             }
 
+            flap();
             drawObstacles();
+            font.draw(batch, String.valueOf(score), 100, 200);
+
 
             if (birdY > 0) {
                 velocity += gravity;
@@ -184,6 +189,8 @@ public class FlappyDiver extends ApplicationAdapter {
             }
 
         } else if (gameState == 0) {
+            batch.draw(splashScreen, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1000);
+
             if (Gdx.input.justTouched()) {
                 gameState = 1;
             }
@@ -203,9 +210,6 @@ public class FlappyDiver extends ApplicationAdapter {
                 velocity = 0;
             }
         }
-
-        flap();
-        font.draw(batch, String.valueOf(score), 100, 200);
 
         batch.end();
 
