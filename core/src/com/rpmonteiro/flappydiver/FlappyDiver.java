@@ -3,6 +3,7 @@ package com.rpmonteiro.flappydiver;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -30,6 +31,7 @@ public class FlappyDiver extends ApplicationAdapter {
     int flapState = 0;
     float birdY = 0;
     float birdX = 0;
+    Sound jumpSound;
 
     float velocity = 0;
     int gameState = 0;
@@ -56,7 +58,8 @@ public class FlappyDiver extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump1.wav"));
+        batch = new SpriteBatch();
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
 		background = new Texture("bg.png");
@@ -176,6 +179,7 @@ public class FlappyDiver extends ApplicationAdapter {
             }
 
             if (Gdx.input.justTouched()) {
+                jumpSound.play(1.0f);
                 velocity = jumpHeight;
             }
 
