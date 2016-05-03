@@ -38,7 +38,7 @@ public class FlappyDiver extends ApplicationAdapter {
     float velocity = 0;
     int gameState = 0;
     double gravity = 2.3;
-    float gap = 800;
+    float gap = 500;
     Random randomGenerator;
 
     int score = 0;
@@ -60,42 +60,45 @@ public class FlappyDiver extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
-        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
-        batch = new SpriteBatch();
         windowHeight = Gdx.graphics.getHeight();
         windowWidth = Gdx.graphics.getWidth();
-		background = new Texture("bg.png");
-        gameover = new Texture("scoreboardFinal.png");
-        splashScreen = new Texture("splashFinal.png");
 
         prefs = Gdx.app.getPreferences("FlappyDiver");
-
         if (!prefs.contains("highScore")) {
             prefs.putInteger("highScore", 0);
         }
 
-        font = new BitmapFont(Gdx.files.internal("text.fnt"), Gdx.files.internal("text.png"), false);
+        initAssets();
+        setupVariables();
+        startGame();
+    }
 
+    public void initAssets() {
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        background = new Texture("bg.png");
+        font = new BitmapFont(Gdx.files.internal("text.fnt"), Gdx.files.internal("text.png"), false);
+        gameover = new Texture("scoreboardFinal.png");
+        splashScreen = new Texture("splashFinal.png");
+        topObstacle = new Texture("toptube.png");
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
         birds[1] = new Texture("bird2.png");
+        bottomObstacle = new Texture("bottomtube.png");
+        batch = new SpriteBatch();
+    }
+
+    public void setupVariables() {
         birdY = windowHeight / 2 - birds[0].getHeight() / 2;
         birdX = windowWidth / 2 - birds[0].getWidth() / 2;
-
         birdCircle = new Circle();
-
-        topObstacle = new Texture("toptube.png");
-        bottomObstacle = new Texture("bottomtube.png");
-        maxObstacleOffset = windowHeight / 2 - gap / 2 - 100;
 
         randomGenerator = new Random();
 
+        maxObstacleOffset = windowHeight / 2 - gap / 2 - 100;
         distanceBetweenObstacles = windowWidth * 3 / 4;
         topObstacleRectangles = new Rectangle[numberOfObstacles];
         bottomObstacleRectangles = new Rectangle[numberOfObstacles];
-
-        startGame();
     }
 
     public void startGame() {
