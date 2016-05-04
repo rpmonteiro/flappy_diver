@@ -159,6 +159,8 @@ public class FlappyDiver extends ApplicationAdapter {
         for (int i = 0; i < numberOfObstacles; i++) {
             if (Intersector.overlaps(birdCircle, topObstacleRectangles[i]) || Intersector.overlaps(birdCircle, bottomObstacleRectangles[i])) {
                 Gdx.app.log("FlappyDiver", "Im colliding");
+                startGame();
+                dead.play(1.0f);
                 gameState = 2;
             }
         }
