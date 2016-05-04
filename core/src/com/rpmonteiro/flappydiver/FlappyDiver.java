@@ -5,13 +5,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Random;
 
@@ -35,6 +38,7 @@ public class FlappyDiver extends ApplicationAdapter {
     float birdX = 0;
     Sound jumpSound;
     Music music;
+    Sound dead;
 
     //Velocity - Gravity
     float velocity = 0;
@@ -82,6 +86,7 @@ public class FlappyDiver extends ApplicationAdapter {
     public void initAssets() {
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        dead = Gdx.audio.newSound(Gdx.files.internal("dead.wav"));
         background = new Texture("bg.png");
         font = new BitmapFont(Gdx.files.internal("text.fnt"), Gdx.files.internal("text.png"), false);
         gameover = new Texture("scoreboardFinal.png");
@@ -153,6 +158,7 @@ public class FlappyDiver extends ApplicationAdapter {
     public void checkCollision() {
         for (int i = 0; i < numberOfObstacles; i++) {
             if (Intersector.overlaps(birdCircle, topObstacleRectangles[i]) || Intersector.overlaps(birdCircle, bottomObstacleRectangles[i])) {
+                Gdx.app.log("FlappyDiver", "Im colliding");
                 gameState = 2;
             }
         }
@@ -204,12 +210,13 @@ public class FlappyDiver extends ApplicationAdapter {
             velocity += gravity;
             birdY -= velocity;
         } else {
+            dead.play(1.0f);
             gameState = 2;
         }
     }
 
     public void drawSplashScreen() {
-        batch.draw(splashScreen, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1000);
+        batch.draw(splashScreen, windowWidth / 13, windowHeight / 3 - splashScreen.getHeight() / 2, windowWidth - splashScreen.getWidth(), windowHeight / 2);
     }
 
     public void resetGameState() {
@@ -221,17 +228,19 @@ public class FlappyDiver extends ApplicationAdapter {
     }
 
     public void showGameoverScreen() {
-        batch.draw(gameover, windowWidth / 6 - gameover.getWidth() / 2 - 25, windowHeight / 3 - gameover.getHeight() / 2, 1000, 1200);
+        batch.draw(gameover, windowWidth / 13, windowHeight / 3 - gameover.getHeight() / 2, windowWidth - gameover.getWidth(), windowHeight / 1.8f);
         font.getData().setScale(2);
-        font.draw(batch, String.valueOf(score), windowWidth / 2 + 225, windowHeight / 2 + 325);
-        font.draw(batch, String.valueOf(getHighScore()), windowWidth / 2 + 195, windowHeight / 2 + 110);
+        font.draw(batch, String.valueOf(score), windowWidth / 1.45f, windowHeight / 1.59f);
+        font.draw(batch, String.valueOf(getHighScore()), windowWidth / 1.45f, windowHeight / 1.9f);
+
     }
 
 	@Override
 	public void render () {
         batch.begin();
+        Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
         drawBackground();
-        music.play();
+//        music.play();
 
         if (gameState == 1) {
 
