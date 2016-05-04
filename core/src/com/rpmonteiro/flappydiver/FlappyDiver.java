@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Random;
 
@@ -86,16 +83,16 @@ public class FlappyDiver extends ApplicationAdapter {
     public void initAssets() {
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump2.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
-        dead = Gdx.audio.newSound(Gdx.files.internal("dead.wav"));
+        dead = Gdx.audio.newSound(Gdx.files.internal("dead.ogg"));
         background = new Texture("bg.png");
         font = new BitmapFont(Gdx.files.internal("text.fnt"), Gdx.files.internal("text.png"), false);
         gameover = new Texture("scoreboardFinal.png");
         splashScreen = new Texture("splashFinal.png");
-        topObstacle = new Texture("toptube.png");
+        topObstacle = new Texture("toptubeBIG.png");
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
         birds[1] = new Texture("bird2.png");
-        bottomObstacle = new Texture("bottomtube.png");
+        bottomObstacle = new Texture("bottomtubeBIG.png");
         batch = new SpriteBatch();
     }
 
@@ -242,7 +239,8 @@ public class FlappyDiver extends ApplicationAdapter {
         batch.begin();
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
         drawBackground();
-//        music.play();
+        music.play();
+        music.setVolume(0.1f);
 
         if (gameState == 1) {
 
